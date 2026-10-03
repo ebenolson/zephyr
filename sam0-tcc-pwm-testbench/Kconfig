@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: Apache-2.0
+
+mainmenu "SAM0 TCC PWM testbench"
+
+choice TB_DRIVER
+	prompt "PWM driver under test"
+	default TB_DRIVER_IN_TREE
+
+config TB_DRIVER_IN_TREE
+	bool "drivers/pwm/pwm_sam0_tcc.c from ZEPHYR_BASE"
+
+config TB_DRIVER_MAIN
+	bool "Unpatched: write PERB/CCB directly (variants/pwm_sam0_tcc_main.c)"
+
+config TB_DRIVER_LUPD
+	bool "Hold CTRLB.LUPD across the PERB/CCB writes (variants/pwm_sam0_tcc_lupd.c)"
+
+config TB_DRIVER_STOP
+	bool "Stop the counter and write PER/CC directly (variants/pwm_sam0_tcc_stop.c)"
+
+config TB_DRIVER_DIRECT
+	bool "Write PER/CC directly on the running counter (variants/pwm_sam0_tcc_direct.c)"
+
+config TB_DRIVER_HYBRID
+	bool "Write PER directly, CC through CCB under LUPD (variants/pwm_sam0_tcc_hybrid.c)"
+
+endchoice
+
+config TB_SWEEP_TRIALS
+	int "Trials for each starting period in the period sweep"
+	default 100
+
+config TB_DUTY_TRIALS
+	int "Pulse-width changes in the duty test"
+	default 200
+
+config TB_UF2_REBOOT
+	bool "Reboot into the UF2 bootloader when 'b' arrives on the console"
+	default y if BOARD_SEEEDUINO_XIAO
+	select REBOOT
+	help
+	  Lets a flash script enter the Adafruit UF2 bootloader without a
+	  physical double-tap. The magic address is for 32 KB SRAM parts.
+
+# udc_sam0.c logs every new IN transfer at INFO level. With a USB console,
+# each console write logs another line, and the console floods. Show only
+# USB driver warnings. This default applies only when USB is enabled.
+choice UDC_DRIVER_LOG_LEVEL_CHOICE
+	default UDC_DRIVER_LOG_LEVEL_WRN
+endchoice
+
+source "Kconfig.zephyr"

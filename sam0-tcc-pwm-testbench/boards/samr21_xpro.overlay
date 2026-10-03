@@ -1,0 +1,23 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * SAM R21 Xplained Pro: TCC0/WO3 on PA19 (LED0), from the board's pwm-led0.
+ * Each twister scenario sets the prescaler with -DTB_PRESCALER (see
+ * testcase.yaml). A plain build uses prescaler 1.
+ */
+
+#include <zephyr/dt-bindings/pwm/pwm.h>
+
+#ifndef TB_PRESCALER
+#define TB_PRESCALER 1
+#endif
+
+/ {
+	zephyr,user {
+		pwms = <&tcc0 3 PWM_USEC(40)>;
+	};
+};
+
+&tcc0 {
+	prescaler = <TB_PRESCALER>;
+};

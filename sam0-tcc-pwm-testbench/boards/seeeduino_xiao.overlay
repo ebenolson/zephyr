@@ -1,0 +1,41 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Seeeduino XIAO: TCC0/WO0 on PA4 (pin D1). No wiring needed.
+ * Each twister scenario sets the prescaler with -DTB_PRESCALER (see
+ * testcase.yaml). A plain build uses prescaler 1.
+ */
+
+#include <zephyr/dt-bindings/pwm/pwm.h>
+
+#ifndef TB_PRESCALER
+#define TB_PRESCALER 1
+#endif
+
+#include <dt-bindings/pinctrl/samd21-da1gXabcd-pinctrl.h>
+
+&pinctrl {
+	tb_pwm_default: tb_pwm_default {
+		group1 {
+			pinmux = <PA4E_TCC0_WO0>;
+		};
+	};
+};
+
+&tcc0 {
+	status = "okay";
+	compatible = "atmel,sam0-tcc-pwm";
+	#pwm-cells = <2>;
+	pinctrl-0 = <&tb_pwm_default>;
+	pinctrl-names = "default";
+};
+
+/ {
+	zephyr,user {
+		pwms = <&tcc0 0 PWM_USEC(40)>;
+	};
+};
+
+&tcc0 {
+	prescaler = <TB_PRESCALER>;
+};

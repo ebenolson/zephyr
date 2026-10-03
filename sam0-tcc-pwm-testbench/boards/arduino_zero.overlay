@@ -1,0 +1,23 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Arduino Zero: TCC2/WO1 on PA17 (pin 13, LED), from the board's pwm-led0.
+ * Each twister scenario sets the prescaler with -DTB_PRESCALER (see
+ * testcase.yaml). A plain build uses prescaler 1.
+ */
+
+#include <zephyr/dt-bindings/pwm/pwm.h>
+
+#ifndef TB_PRESCALER
+#define TB_PRESCALER 1
+#endif
+
+/ {
+	zephyr,user {
+		pwms = <&tcc2 1 PWM_USEC(40)>;
+	};
+};
+
+&tcc2 {
+	prescaler = <TB_PRESCALER>;
+};

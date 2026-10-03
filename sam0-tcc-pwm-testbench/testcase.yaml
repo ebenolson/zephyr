@@ -1,0 +1,83 @@
+common:
+  tags:
+    - drivers
+    - pwm
+  harness: ztest
+  timeout: 180
+  platform_allow:
+    - seeeduino_xiao
+    - samd21_xpro
+    - samr21_xpro
+    - samc21n_xpro
+    - arduino_zero
+  integration_platforms:
+    - samd21_xpro
+    - samc21n_xpro
+  extra_args:
+    # The XIAO console is USB CDC ACM
+    - platform:seeeduino_xiao/samd21g18a:SNIPPET=cdc-acm-console
+# Scenario names: sam0_tcc_pwm.<driver>.p<prescaler>
+#   in_tree: drivers/pwm/pwm_sam0_tcc.c in ZEPHYR_BASE, on every board
+#   main, lupd, stop, direct, hybrid: fixed copies in variants/. They
+#   differ only in the SAMD21/SAMR21 (PERB/CCB) branch, so they run only
+#   on SAMD21 and SAMR21 boards. On other families they would all build
+#   the same code as in_tree.
+# The loss window scales with the TCC tick, so test every driver at
+# prescaler 1 and 1024.
+tests:
+  sam0_tcc_pwm.in_tree.p1:
+    extra_args:
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1
+  sam0_tcc_pwm.in_tree.p1024:
+    extra_args:
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1024
+  sam0_tcc_pwm.main.p1:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/main.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1
+  sam0_tcc_pwm.main.p1024:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/main.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1024
+  sam0_tcc_pwm.lupd.p1:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/lupd.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1
+  sam0_tcc_pwm.lupd.p1024:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/lupd.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1024
+  sam0_tcc_pwm.stop.p1:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/stop.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1
+  sam0_tcc_pwm.stop.p1024:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/stop.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1024
+  sam0_tcc_pwm.direct.p1:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/direct.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1
+  sam0_tcc_pwm.direct.p1024:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/direct.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1024
+  sam0_tcc_pwm.hybrid.p1:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/hybrid.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1
+  sam0_tcc_pwm.hybrid.p1024:
+    filter: CONFIG_SOC_SERIES_SAMD21 or CONFIG_SOC_SERIES_SAMR21
+    extra_args:
+      - EXTRA_CONF_FILE=variants/hybrid.conf
+      - DTS_EXTRA_CPPFLAGS=-DTB_PRESCALER=1024
